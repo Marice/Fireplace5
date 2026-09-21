@@ -1,0 +1,20 @@
+{
+  "applicationCategoryType": 0,
+  "attribute": 0,
+  "attribute2": 0,
+  "attribute3": 0,
+  "contentId": "UP0000-FIRE00005_00-FIREPLACE5000000",
+  "contentVersion": "01.00",
+  "localizedParameters": {
+    "defaultLanguage": "en-US",
+    "en-US": {
+      "titleName": "Fireplace5"
+    }
+  },
+  "masterVersion": "01.00",
+  "pubtoolInfo": {
+    "creationDate": "2026-09-21"
+  },
+  "titleId": "FIRE00005",
+  "version": "01.00"
+}

@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `make pkgsrc` target and `pkg/sce_sys/param.json` to assemble a
+  debug/homebrew fake-PKG source folder (`eboot.bin` + metadata) for the
+  LibProsperoPKG / PPR-PKG builder.
+
 ## [v1.0.0] - 2026-09-21
 
 ### Added

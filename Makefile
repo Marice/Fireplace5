@@ -42,6 +42,17 @@ homebrew: $(ELF) sce_sys/icon0.png
 	cp assets/external.xm dist/$(TITLE)/external.xm
 	cd dist && rm -f $(TITLE).zip && zip -r $(TITLE).zip $(TITLE)
 
+# Assemble a source folder for a debug/homebrew fake PKG (LibProsperoPKG /
+# PPR-PKG builder). It expects the executable as a raw ELF named eboot.bin.
+# Point the builder's "Source folder" at dist/$(TITLE)-pkgsrc.
+pkgsrc: $(ELF) sce_sys/icon0.png pkg/sce_sys/param.json
+	mkdir -p dist/$(TITLE)-pkgsrc/sce_sys
+	cp $(ELF) dist/$(TITLE)-pkgsrc/eboot.bin
+	cp sce_sys/icon0.png dist/$(TITLE)-pkgsrc/sce_sys/icon0.png
+	cp pkg/sce_sys/param.json dist/$(TITLE)-pkgsrc/sce_sys/param.json
+	cp assets/external.xm dist/$(TITLE)-pkgsrc/external.xm
+	@echo "PKG source ready: dist/$(TITLE)-pkgsrc"
+
 # --- Desktop smoke test (no PS5 SDK; needs libsdl2-dev) ---
 native: src/main.cpp src/xm_player.c
 	gcc -O2 -c src/xm_player.c -o xm_player-native.o
@@ -50,4 +61,4 @@ native: src/main.cpp src/xm_player.c
 clean:
 	rm -rf $(ELF) *.o $(TITLE)-native dist
 
-.PHONY: test homebrew native clean
+.PHONY: test homebrew pkgsrc native clean

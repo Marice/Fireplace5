@@ -65,6 +65,28 @@ make test PS5_HOST=<ps5-ip>
 It then appears in the [websrv](https://github.com/ps5-payload-dev/websrv)
 homebrew menu.
 
+**Debug/homebrew PKG** — to build an installable fake PKG (e.g. with the
+LibProsperoPKG / PPR-PKG builder):
+
+```sh
+make pkgsrc         # assembles dist/Fireplace5-pkgsrc/ (eboot.bin + sce_sys/)
+```
+
+Then in the PKG builder set:
+
+| Field | Value |
+|---|---|
+| Source folder | `dist/Fireplace5-pkgsrc` |
+| Content ID | `UP0000-FIRE00005_00-FIREPLACE5000000` |
+| Title | `Fireplace5` |
+| Version | `01.00` |
+| Package type | `Homebrew` |
+| Image mode | `PLAINTEXT_NOAUTH` |
+
+The executable must be a raw ELF named `eboot.bin` (the target renames it);
+`sce_sys/param.json` (in `pkg/`) carries the metadata. This produces an
+unsigned debug package for your own jailbroken console only.
+
 ## Credits
 
 - Fire effect: [hanshq.net](https://www.hanshq.net/fire.html), original palette by Jare
