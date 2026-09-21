@@ -10,13 +10,15 @@ else
     $(warning PS5_PAYLOAD_SDK is undefined - only the 'native' target will work)
 endif
 
-# SDL2 flags via the SDK's pkg-config wrapper.
+# SDL2 flags via the SDK's pkg-config wrapper. The PS5 SDL2 build does not
+# actually pull in libsamplerate (no unresolved src_* symbols), and there is
+# no separate libm on the PS5 (math lives in libc), so both are filtered out.
 SDL_CFLAGS := $(shell $(PKG_CONFIG) --cflags sdl2 2>/dev/null)
-SDL_LIBS   := $(shell $(PKG_CONFIG) --libs sdl2 2>/dev/null)
+SDL_LIBS   := $(filter-out -lsamplerate -lm,$(shell $(PKG_CONFIG) --libs sdl2 2>/dev/null))
 
 CFLAGS   := -Wall -O2 $(SDL_CFLAGS)
 CXXFLAGS := -Wall -O2 $(SDL_CFLAGS)
-LDLIBS   := $(SDL_LIBS) -lm
+LDLIBS   := $(SDL_LIBS)
 
 # --- PS5 payload build ---
 $(ELF): main.o xm_player.o
