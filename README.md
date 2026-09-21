@@ -7,7 +7,7 @@ PlayStation 5 as a homebrew payload. Part of the Fireplace family:
 and now the PS5. The fire effect is based on
 [hanshq.net](https://www.hanshq.net/fire.html).
 
-The fire is simulated on a 192x108 buffer and scaled to 1920x1080. A
+The fire is simulated on a 384x216 buffer and scaled to 1920x1080. A
 cracktro-style scroller waves across the flames, with rising embers, a
 parallax starfield, chiptune music, wind, adjustable intensity and a CRT
 filter.

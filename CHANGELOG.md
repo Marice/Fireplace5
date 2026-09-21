@@ -9,7 +9,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 - PlayStation 5 homebrew port (ELF payload) built with the ps5-payload-dev
   SDK and its SDL2 port.
-- 16:9 fire simulation (192x108) scaled to 1920x1080.
+- 16:9 fire simulation (384x216) scaled to 1920x1080.
 - Cracktro-style text scroller, five color palettes, rising embers, clock
   overlay, parallax starfield, chiptune music (embedded XM player), wind,
   adjustable fire intensity and a CRT scanline filter.

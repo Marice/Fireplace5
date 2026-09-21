@@ -34,23 +34,28 @@ if [ -f "$PS5_PAYLOAD_SDK/libcxx.sh" ] && [ ! -d "$PS5_PAYLOAD_SDK/target/includ
     sudo -E bash "$PS5_PAYLOAD_SDK/libcxx.sh" || echo "    (libcxx.sh skipped - release may already bundle it)"
 fi
 
-echo "==> [5/5] SDL2 into the SDK (CMake route)"
+echo "==> [5/5] SDL2 into the SDK (build + install)"
 if ls "$PS5_PAYLOAD_SDK"/target/user/homebrew/lib/libSDL2* >/dev/null 2>&1; then
     echo "    SDL2 already in the SDK"
 else
-    rm -rf /tmp/ps5-sdl
-    git clone --depth 1 -b release-2.30.x-ps5 \
-        https://github.com/ps5-payload-dev/SDL.git /tmp/ps5-sdl || fail "clone SDL"
-    if [ -f /tmp/ps5-sdl/build-scripts/ps5-payload-sdk.sh ]; then
-        ( cd /tmp/ps5-sdl/build-scripts && sudo -E bash ./ps5-payload-sdk.sh ) || fail "build SDL (see output above)"
-    else
-        echo "    build-scripts/ps5-payload-sdk.sh not found; building SDL manually"
+    # Build SDL for PS5 if not already built.
+    if [ ! -f /tmp/ps5-sdl/build-scripts/build-ps5/libSDL2.a ]; then
+        rm -rf /tmp/ps5-sdl
+        git clone --depth 1 -b release-2.30.x-ps5 \
+            https://github.com/ps5-payload-dev/SDL.git /tmp/ps5-sdl || fail "clone SDL"
         source "$PS5_PAYLOAD_SDK/toolchain/prospero.sh"
+        # The repo's ps5-payload-sdk.sh also builds a test app that fails on
+        # find_package(SDL2); we only need the library, so configure+build it
+        # directly (skip the test app).
         cmake -DCMAKE_BUILD_TYPE=Release -DSDL_OPENGL=YES -DSDL_LOADSO=YES \
-              -S /tmp/ps5-sdl -B /tmp/ps5-sdl/build-ps5 || fail "cmake configure SDL"
-        make -C /tmp/ps5-sdl/build-ps5 -j"$(nproc)" || fail "make SDL"
-        sudo -E make -C /tmp/ps5-sdl/build-ps5 install || fail "install SDL"
+              -S /tmp/ps5-sdl -B /tmp/ps5-sdl/build-scripts/build-ps5 || fail "cmake configure SDL"
+        make -C /tmp/ps5-sdl/build-scripts/build-ps5 -j"$(nproc)" || fail "make SDL"
     fi
+    # Install into the SDK sysroot. The install prefix baked into the build
+    # is /user/homebrew, so DESTDIR=<sysroot> lands the files at
+    # <sysroot>/user/homebrew/{lib,include}, where the prospero wrappers look.
+    sudo env DESTDIR="$PS5_PAYLOAD_SDK/target" \
+        make -C /tmp/ps5-sdl/build-scripts/build-ps5 install || fail "install SDL into SDK"
 fi
 
 echo

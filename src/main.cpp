@@ -14,9 +14,9 @@ extern "C" {
 
 #include "font8x8_basic.h"
 
-/* 16:9 fire buffer, scaled 10x to 1920x1080 by the renderer. */
-#define WIDTH 192
-#define HEIGHT 108
+/* 16:9 fire buffer, scaled 5x to 1920x1080 by the renderer. */
+#define WIDTH 384
+#define HEIGHT 216
 #define FPS 60
 
 /* PS5 DualSense joystick button numbers (ps5-payload-dev SDL2 port,
@@ -42,10 +42,10 @@ static const char SCROLL_TEXT[] =
 	"OLIVIER <3 - ELISE <3 - CAROLIEN <3 ... "
 	"MADE BY MARICE ... "
 	"PRESS CROSS TO TOGGLE THIS SCROLLER ... ENJOY THE WARMTH! ...";
-#define SCROLL_SPEED  1.6f  /* pixels per frame */
-#define SCROLL_Y_BASE 40    /* top of glyphs, before sine offset */
-#define SCROLL_AMP    11.0f /* sine amplitude in pixels */
-#define SCROLL_FREQ   0.07f /* sine frequency along x */
+#define SCROLL_SPEED  2.4f  /* pixels per frame */
+#define SCROLL_Y_BASE 84    /* top of glyphs, before sine offset */
+#define SCROLL_AMP    20.0f /* sine amplitude in pixels */
+#define SCROLL_FREQ   0.035f /* sine frequency along x */
 
 #define NUM_PALETTES 5
 
@@ -57,7 +57,7 @@ static const int fire_seed[NUM_LEVELS]      = { 10, 16, 22, 30, 38 };
 static const int fire_threshold[NUM_LEVELS] = {  9, 15, 15, 15, 15 };
 
 /* Rising embers. */
-#define NUM_EMBERS 24
+#define NUM_EMBERS 48
 typedef struct {
 	float x, y, vx, vy;
 	int life;
@@ -65,7 +65,7 @@ typedef struct {
 static Ember embers[NUM_EMBERS];
 
 /* Parallax starfield in the dark area above the flames. */
-#define NUM_STARS 48
+#define NUM_STARS 110
 typedef struct {
 	float x;
 	int y;
@@ -133,7 +133,7 @@ static void init_stars(void)
 	for (i = 0; i < NUM_STARS; i++) {
 			int layer = i % 3;
 			stars[i].x = (float)(rand() % WIDTH);
-			stars[i].y = 2 + rand() % 22;
+			stars[i].y = 4 + rand() % 60;
 			stars[i].speed = layer_speed[layer];
 			stars[i].color = layer_color[layer];
 	}
@@ -157,9 +157,9 @@ static void update_draw_stars(void)
 static void respawn_ember(Ember* e)
 {
 	e->x = 4 + (float)(rand() % (WIDTH - 8));
-	e->y = HEIGHT - 12 - (float)(rand() % 14);
-	e->vx = ((rand() % 100) - 50) / 250.0f;
-	e->vy = -0.2f - (rand() % 100) / 180.0f;
+	e->y = HEIGHT - 24 - (float)(rand() % 28);
+	e->vx = ((rand() % 100) - 50) / 125.0f;
+	e->vy = -0.4f - (rand() % 100) / 90.0f;
 	e->life = 60 + rand() % 140;
 }
 
