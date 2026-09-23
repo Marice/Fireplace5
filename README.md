@@ -37,11 +37,10 @@ Press **Touchpad** any time for this list on-screen.
 
 Needs the [ps5-payload-dev SDK](https://github.com/ps5-payload-dev/sdk)
 (clang-18, target `x86_64-sie-ps5`) with the
-[SDL2 port](https://github.com/ps5-payload-dev/SDL) installed. On a fresh
-Linux/WSL host, `setup-ps5-sdk.sh` installs all of it:
+[SDL2 port](https://github.com/ps5-payload-dev/SDL) installed into it (SDL2
+lands under the SDK's `user/homebrew` prefix). Then:
 
 ```sh
-bash setup-ps5-sdk.sh
 export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
 make                # builds eboot.elf
 make homebrew       # assembles dist/Fireplace5/ + zip for the launcher

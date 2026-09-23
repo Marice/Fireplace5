@@ -2,3 +2,5 @@
 /Fireplace5-native
 /dist/
 *.o
+/setup-ps5-sdk.sh
+/tools/
