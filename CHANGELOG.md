@@ -6,6 +6,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+- `external.xm` was not found when launched from websrv or elfldr, because
+  those launchers do not change into the homebrew folder. The module is now
+  resolved relative to `eboot.elf` (directory of `argv[0]`, then the standard
+  homebrew roots), so music plays when started from the Homebrew menu.
+
 ### Added
 - `make pkgsrc` target and `pkg/sce_sys/param.json` to assemble a
   debug/homebrew fake-PKG source folder (`eboot.bin` + metadata) for the

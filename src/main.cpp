@@ -313,7 +313,43 @@ static void draw_scroller(float scroll_x, int frame)
 	}
 }
 
-int main()
+/* Locate a data file that ships next to eboot.elf. Launchers such as websrv
+   and elfldr do not chdir into the homebrew folder, so a bare relative path
+   only works for the desktop build. Try, in order: the directory of argv[0],
+   the standard homebrew roots websrv scans, and finally the repo layout.
+   Returns NULL when the file is not found anywhere. */
+static const char* find_asset(const char* name, const char* argv0, char* out, size_t out_len)
+{
+	static const char* roots[] = {
+		"/data/homebrew/Fireplace5",
+		"/mnt/usb0/homebrew/Fireplace5", "/mnt/usb1/homebrew/Fireplace5",
+		"/mnt/ext0/homebrew/Fireplace5", "/mnt/ext1/homebrew/Fireplace5",
+		".", "assets",
+	};
+
+	if (argv0) {
+		const char* slash = strrchr(argv0, '/');
+		if (slash && (size_t)(slash - argv0) + strlen(name) + 2 <= out_len) {
+			snprintf(out, out_len, "%.*s/%s", (int)(slash - argv0), argv0, name);
+			FILE* f = fopen(out, "rb");
+			if (f) {
+				fclose(f);
+				return out;
+			}
+		}
+	}
+	for (size_t i = 0; i < sizeof(roots) / sizeof(roots[0]); i++) {
+		snprintf(out, out_len, "%s/%s", roots[i], name);
+		FILE* f = fopen(out, "rb");
+		if (f) {
+			fclose(f);
+			return out;
+		}
+	}
+	return NULL;
+}
+
+int main(int argc, char** argv)
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) != 0) {
 		fprintf(stderr, "Failed SDL_Init: %s\n", SDL_GetError());
@@ -323,14 +359,12 @@ int main()
 	/* Music: load the XM module and stream it through an SDL audio
 	   device. The app keeps running without music if this fails. */
 	SDL_AudioDeviceID audio_dev = 0;
-	const char* xm_path = "external.xm"; /* pak layout: next to the binary */
-	FILE* probe = fopen(xm_path, "rb");
-	if (!probe) {
-			xm_path = "assets/external.xm"; /* repo layout for the native build */
-	} else {
-			fclose(probe);
+	char xm_buf[512];
+	const char* xm_path = find_asset("external.xm", argc > 0 ? argv[0] : NULL, xm_buf, sizeof(xm_buf));
+	if (xm_path) {
+			fprintf(stderr, "Loading music from %s\n", xm_path);
+			jar_xm_create_context_from_file(&xm_ctx, 48000, xm_path);
 	}
-	jar_xm_create_context_from_file(&xm_ctx, 48000, xm_path);
 	if (xm_ctx) {
 			jar_xm_set_max_loop_count(xm_ctx, 0); /* loop forever */
 			SDL_AudioSpec want, have;
