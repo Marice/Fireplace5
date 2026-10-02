@@ -6,6 +6,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [v1.0.1] - 2026-10-02
+
 ### Fixed
 - `external.xm` was not found when launched from websrv or elfldr, because
   those launchers do not change into the homebrew folder. The module is now
